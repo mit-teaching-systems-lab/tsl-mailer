@@ -1,0 +1,10 @@
+{
+  "name": "tsl-mailer",
+  "version": "0.1.0",
+  "license": "MIT",
+  "dependencies": {
+    "mailgun-cmd": "^0.1.7",
+    "mustache": "^2.3.0",
+    "tsv": "^0.2.0"
+  }
+}
