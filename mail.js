@@ -10,9 +10,11 @@ var request = require('superagent');
 var fs = require('fs');
 
 
-function sendEmailPromise(info) {
+function sendEmailPromise(info, options) {
   var fromEmail = info.fromEmail;
-  var toEmail = info.toEmail;
+  var toEmail = (options && options.debugEmail)
+    ? options.debugEmail
+    : info.toEmail;
   var subject = info.subject;
   var html = fs.readFileSync(info.fullFilename).toString();
 
@@ -36,10 +38,18 @@ function sendEmailPromise(info) {
     });
 }
 
-// Read manifest and send all
+// Read manifest
 var manifestFilename = process.argv[2];
 var manifest = JSON.parse(fs.readFileSync(manifestFilename).toString());
-var promises = manifest.emails.map(sendEmailPromise);
+
+// Debugging options
+var emails = manifest.emails.slice(1, 2);
+var options = { debugEmail: 'kevin.robinson.0+testing@gmail.com' };
+
+// Send
+var promises = emails.map(function(info) {
+  sendEmailPromise(info, options);
+});
 Promise.all(promises).then(function() {
   console.log('Done.');
 });
