@@ -12,8 +12,7 @@ var fs = require('fs');
 
 function sendEmailPromise(info) {
   var fromEmail = info.fromEmail;
-  // var toEmail = info.toEmail;
-  var toEmail = 'kevin.robinson.0+test@gmail.com';
+  var toEmail = info.toEmail;
   var subject = info.subject;
   var html = fs.readFileSync(info.fullFilename).toString();
 
@@ -40,7 +39,7 @@ function sendEmailPromise(info) {
 // Read manifest and send all
 var manifestFilename = process.argv[2];
 var manifest = JSON.parse(fs.readFileSync(manifestFilename).toString());
-var promises = manifest.emails.slice(1, 2).map(sendEmailPromise);
+var promises = manifest.emails.map(sendEmailPromise);
 Promise.all(promises).then(function() {
   console.log('Done.');
 });
