@@ -1,3 +1,5 @@
 *.tsv
 *.csv
 node_modules/**
+emails/**
+data/**
