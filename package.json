@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "license": "MIT",
   "dependencies": {
+    "csv": "^1.1.1",
+    "lodash": "^4.17.4",
     "md5": "^2.2.1",
     "mustache": "^2.3.0",
     "superagent": "^3.5.0",
