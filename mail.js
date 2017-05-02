@@ -3,7 +3,7 @@
 //   MAILGUN_DOMAIN
 //   MAILGUN_API_KEY
 // usage:
-//   MAILGUN_DOMAIN=foo.com MAILGUN_API_KEY=xyz node mail.js emails/1232141190/manifest.json
+//   MAILGUN_DOMAIN=foo.com MAILGUN_API_KEY=xyz node mail.js emails/1232141190/__manifest.json
 
 
 var request = require('superagent');
