@@ -12,17 +12,13 @@ function writeEmail(template, folder, row) {
   var postContent = (row.post_content || '').replace(/\\n/g, "\n");
   var LIMIT = 500;
   var templateParams = {
-    title: 'Launching Innovation in Schools',
-    membersUrl: 'https://launching-innovation.teachingsystemslab.org/members/',
     name: row.user_nicename,
-    lead: 'Hello!',
-    quote: postContent,
+    shouldShowPost: true,
     postExcerptHtml: (postContent && postContent.length > LIMIT)
       ? postContent.slice(0, LIMIT) + '...'
       : postContent,
     postTitle: row.post_title,
-    postUrl: row.guid,
-    ctaUrl: 'https://launching-innovation.teachingsystemslab.org/forums/forum/official-course-forums/course-feedback/'
+    postUrl: row.guid
   };
 
   var html = Mustache.render(template, templateParams);
@@ -34,11 +30,8 @@ function writeEmail(template, folder, row) {
 
 function writeNoPosterEmail(template, folder, row) {
   var templateParams = {
-    title: 'Launching Innovation in Schools',
-    membersUrl: 'https://launching-innovation.teachingsystemslab.org/members/',
     name: row.username,
-    lead: 'Hello!',
-    ctaUrl: 'https://launching-innovation.teachingsystemslab.org/forums/forum/official-course-forums/course-feedback/'
+    shouldShowPost: false
   };
 
   var html = Mustache.render(template, templateParams);
@@ -78,12 +71,13 @@ var noPosterRows = edXUserRows.filter(row => !_.includes(posterEmails, row.email
 try { fs.mkdirSync('emails'); } catch(e) { }
 var folder = 'emails/' + (new Date()).getTime() + '/';
 fs.mkdirSync(folder);
+var templateFilename = 'templates/litmus-simple.html.mustache';
+var template = fs.readFileSync(templateFilename).toString();
+
 
 console.log(`Writing emails for ${rows.length} users who posted...`);
-var posterTemplateFilename = 'templates/litmus-simple.html.mustache';
-var posterTemplate = fs.readFileSync(posterTemplateFilename).toString();
 var posterEmails = rows.map(function(row) {
-  var fullFilename = writeEmail(posterTemplate, folder, row);
+  var fullFilename = writeEmail(template, folder, row);
   return {
     fromEmail: 'noreply@teachingsystemslab.org',
     toEmail: row.user_email,
@@ -96,10 +90,8 @@ var posterEmails = rows.map(function(row) {
 });
 
 console.log(`Writing emails for ${noPosterRows.length} users who didn't post...`);
-var noPosterTemplateFilename = 'templates/litmus-simple-no-post.html.mustache';
-var noPosterTemplate = fs.readFileSync(noPosterTemplateFilename).toString();
 var noPosterEmails = noPosterRows.map(function(row) {
-  var fullFilename = writeNoPosterEmail(noPosterTemplate, folder, row);
+  var fullFilename = writeNoPosterEmail(template, folder, row);
   return {
     fromEmail: 'noreply@teachingsystemslab.org',
     toEmail: row.email,
