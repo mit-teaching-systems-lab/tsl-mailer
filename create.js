@@ -13,12 +13,11 @@ function writeEmail(template, folder, row) {
   var LIMIT = 500;
   var templateParams = {
     name: row.user_nicename,
-    shouldShowPost: true,
+    shouldShowPost: (postContent && postContent.trim().length > 0),
     postExcerptHtml: (postContent && postContent.length > LIMIT)
       ? postContent.slice(0, LIMIT) + '...'
       : postContent,
-    postTitle: row.post_title,
-    postUrl: row.guid
+    postTitle: row.post_title
   };
 
   var html = Mustache.render(template, templateParams);
@@ -58,7 +57,7 @@ if (process.argv.length !== 4) {
 
 console.log('Reading in post data...');
 var postsFilename = process.argv[2];
-var tsvString = fs.readFileSync(postsFilename).toString();
+var tsvString = fs.readFileSync(postsFilename).toString().trim();
 var rows = TSV.parse(tsvString);
 
 console.log('Reading in EdX users and determining who didn\'t post...');
@@ -74,14 +73,13 @@ fs.mkdirSync(folder);
 var templateFilename = 'templates/litmus-simple.html.mustache';
 var template = fs.readFileSync(templateFilename).toString();
 
-
 console.log(`Writing emails for ${rows.length} users who posted...`);
 var posterEmails = rows.map(function(row) {
   var fullFilename = writeEmail(template, folder, row);
   return {
-    fromEmail: 'noreply@teachingsystemslab.org',
+    fromEmail: 'liis11.154x@gmail.com',
     toEmail: row.user_email,
-    subject: 'Launching Innovation in Schools',
+    subject: 'We want to hear how your work is going!',
     fullFilename: fullFilename,
     meta: {
       poster: true
@@ -93,9 +91,9 @@ console.log(`Writing emails for ${noPosterRows.length} users who didn't post...`
 var noPosterEmails = noPosterRows.map(function(row) {
   var fullFilename = writeNoPosterEmail(template, folder, row);
   return {
-    fromEmail: 'noreply@teachingsystemslab.org',
+    fromEmail: 'liis11.154x@gmail.com',
     toEmail: row.email,
-    subject: 'Launching Innovation in Schools',
+    subject: 'We want to hear how your work is going!',
     fullFilename: fullFilename,
     meta: {
       poster: false
